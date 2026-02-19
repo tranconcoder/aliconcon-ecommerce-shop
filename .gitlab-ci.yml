@@ -1,0 +1,35 @@
+stages:
+  - deploy_client_shop
+
+deploy_client_shop:
+  stage: deploy_client_shop
+  tags:
+    - shell
+  variables:
+    DEPLOY_DIR_PATH: "/var/www/aliconcon-ecommerce_client-shop"
+    CI: "false"
+  before_script:
+    - source /home/gitlab-runner/.bashrc
+
+  script:
+    - echo "🚀 Starting deployment script for client-shop..."
+
+    # 1. Install dependencies
+    - echo "📦 Installing dependencies..."
+    - bun install
+
+    # 2. Build application
+    - echo "🔨 Building application..."
+    - bun run build
+
+    # 3. Deploy
+    - echo "🚚 Deploying to $DEPLOY_DIR_PATH..."
+    - rm -rf "$DEPLOY_DIR_PATH"
+    - mkdir -p "$DEPLOY_DIR_PATH"
+    - cp -r ./build/* "$DEPLOY_DIR_PATH"
+
+    - echo "✅ Deployment Complete!"
+
+  only:
+    - main
+    - master
